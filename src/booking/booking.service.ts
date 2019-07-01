@@ -1,24 +1,22 @@
-import { Injectable, Body } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import Booking from '../interfaces/booking.interface';
-import { CreateBookingDto } from '../dtos/create-booking.dto';
-import { validate } from 'class-validator';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from 'nestjs-typegoose';
+import Booking from '../models/booking.model';
+import { ModelType } from 'typegoose';
 
 @Injectable()
 export class BookingService {
-  constructor(@InjectModel('Booking') private readonly bookingModel: Model<Booking>) { }
+  constructor(@InjectModel(Booking) private readonly bookingModel: ModelType<Booking>) { }
 
-  async create(createBookingDto: CreateBookingDto): Promise<Booking> {
+  async create(createBookingDto: Booking): Promise<Booking> {
     const createBooking = new this.bookingModel(createBookingDto);
     return await createBooking.save();
   }
 
-  async findAllByCustomerId(id: string): Promise<Booking[]> {
-    return await this.bookingModel.find({
+  async findCustomerById(id: string): Promise<Booking> {
+    return await this.bookingModel.findOne({
       _id: id,
     })
-    .populate('customerId')
+    .populate('customer')
     .exec();
   }
 }

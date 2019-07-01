@@ -14,6 +14,6 @@ export class CustomerController {
 
     @Get()
     async findAll() {
-        return this.customerService.findAllByCustomerId('asda');
+        return this.customerService.findAllByCustomerId('5d19c8385bf47870d060d286');
     }
 }

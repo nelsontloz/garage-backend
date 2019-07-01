@@ -1,18 +1,18 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { CreateBookingDto } from '../dtos/create-booking.dto';
+import Booking from '../models/booking.model';
 
 @Controller('booking')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) { }
 
   @Post()
-  async create(@Body() createBooking: CreateBookingDto) {
+  async create(@Body() createBooking: Booking) {
     return this.bookingService.create(createBooking);
   }
 
-  @Get()
-  async findAll() {
-    return this.bookingService.findAllByCustomerId('5d17c2339a12687d1f2621bd');
+  @Get(':id')
+  async findAll(@Param('id') id: string) {
+    return this.bookingService.findCustomerById(id);
   }
 }
