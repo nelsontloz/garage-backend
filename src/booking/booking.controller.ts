@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import Booking from '../models/booking.model';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Controller('booking')
 export class BookingController {
@@ -12,7 +14,9 @@ export class BookingController {
   }
 
   @Get(':id')
-  async findAll(@Param('id') id: string) {
+  @UseGuards(AuthGuard())
+  async findAll(@Param('id') id: string, @Req() request: Request) {
+    console.log(request);
     return this.bookingService.findCustomerById(id);
   }
 }

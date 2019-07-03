@@ -8,13 +8,19 @@ export class CustomerService {
 
     constructor(@InjectModel(Customer) private readonly customerModel: ModelType<Customer>) { }
 
-    async create(createCatDto: CreateCustomerDto): Promise<Customer> {
-        const createdCat = new this.customerModel(createCatDto);
+    async create(customer: Customer): Promise<Customer> {
+        const createdCat = new this.customerModel(customer);
         return await createdCat.save();
     }
 
-    async findAllByCustomerId(id: string): Promise<Customer[]> {
-        return await this.customerModel.find({
+    async findCustomerByEmail(email: string): Promise<Customer> {
+        return await this.customerModel.findOne({
+            email,
+        }).exec();
+    }
+
+    async findCustomerById(id: string): Promise<Customer> {
+        return await this.customerModel.findOne({
             _id: id,
         }).exec();
     }

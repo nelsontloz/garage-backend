@@ -1,5 +1,5 @@
 import { prop, Typegoose } from 'typegoose';
-import { IsString, IsEmail } from 'class-validator';
+import { IsString, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export default class Customer extends Typegoose {
 
@@ -11,11 +11,15 @@ export default class Customer extends Typegoose {
     @prop({ required: true })
     lastName: string;
 
-    @IsString()
+    @IsPhoneNumber('IE')
     @prop()
     phone: string;
 
     @IsEmail()
-    @prop({ required: true })
+    @prop({
+        index: true,
+        unique: true,
+        required: true,
+    })
     email: string;
 }

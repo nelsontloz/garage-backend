@@ -2,7 +2,7 @@ import { Typegoose, prop, Ref } from 'typegoose';
 import { IsString, IsEnum, IsMongoId } from 'class-validator';
 import Customer from './customer.model';
 
-export enum EngineType {
+export enum VehicleEngineType {
     DIESEL = 'diesel',
     PRETROL = 'petrol',
     HYBRID = 'hybrid',
@@ -18,9 +18,9 @@ export default class Vehicle extends Typegoose {
     @prop({ required: true })
     licenseDetails: string;
 
-    @IsEnum(EngineType)
-    @prop({ enum: Object.values(EngineType), required: true })
-    engineType: EngineType;
+    @IsEnum(VehicleEngineType)
+    @prop({ enum: Object.values(VehicleEngineType), required: true })
+    engineType: VehicleEngineType;
 
     @IsMongoId()
     @prop({ ref: Customer, required: true })

@@ -1,6 +1,6 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-import { CreateCustomerDto } from '../dtos/create-customer.dto';
+import Customer from '../models/customer.model';
 
 @Controller('customer')
 export class CustomerController {
@@ -8,12 +8,17 @@ export class CustomerController {
     constructor(private readonly customerService: CustomerService) { }
 
     @Post()
-    async create(@Body() createBooking: CreateCustomerDto) {
+    async create(@Body() createBooking: Customer) {
         return this.customerService.create(createBooking);
     }
 
     @Get()
     async findAll() {
-        return this.customerService.findAllByCustomerId('5d19c8385bf47870d060d286');
+        return this.customerService.findCustomerById('5d19c8385bf47870d060d286');
+    }
+
+    @Get(':email')
+    async findCustomerByEmail(@Param('email') email: string) {
+        return this.customerService.findCustomerByEmail(email);
     }
 }
