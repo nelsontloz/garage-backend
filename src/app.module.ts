@@ -15,7 +15,7 @@ import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import User from './models/user.model';
 import Session from './models/session.model';
-import { HttpStrategy } from './http.strategy';
+import { HttpStrategy } from './auth/http.strategy';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({

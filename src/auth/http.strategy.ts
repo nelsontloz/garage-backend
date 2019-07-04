@@ -1,7 +1,8 @@
 import { Strategy } from 'passport-http-bearer';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
@@ -10,9 +11,16 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(accessToken: string) {
-    const session = await this.authService.validateSession(accessToken);
+    const session = await this.authService.getSession(accessToken);
     if (!session) {
       throw new UnauthorizedException();
+    }
+    if (session.revoked) {
+      throw new UnauthorizedException('Session revoked');
+    }
+    const currentDate = moment();
+    if (currentDate > moment(session.expiration)) {
+      throw new UnauthorizedException('Session expired');
     }
     return session;
   }

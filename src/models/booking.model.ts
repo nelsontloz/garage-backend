@@ -12,7 +12,7 @@ export enum BookingServiceType {
 
 export enum BookingStatus {
     BOOKED = 'booked',
-    IN_SERVICE = 'in_service',
+    IN_SERVICE = 'in service',
     FIXED = 'fixed',
     COLLECTED = 'collected',
     UNREPAIRABLE = 'unrepairable',

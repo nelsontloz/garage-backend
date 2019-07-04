@@ -16,7 +16,6 @@ export class BookingController {
   @Get(':id')
   @UseGuards(AuthGuard())
   async findAll(@Param('id') id: string, @Req() request: Request) {
-    console.log(request);
     return this.bookingService.findCustomerById(id);
   }
 }
