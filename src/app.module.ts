@@ -10,13 +10,16 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
+import { HttpStrategy } from './auth/http.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { AccountController } from './account/account.controller';
+import { AccountService } from './account/account.service';
 import Customer from './models/customer.model';
 import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import User from './models/user.model';
 import Session from './models/session.model';
-import { HttpStrategy } from './auth/http.strategy';
-import { PassportModule } from '@nestjs/passport';
+import Account from './models/account.model';
 
 @Module({
   imports: [
@@ -27,6 +30,7 @@ import { PassportModule } from '@nestjs/passport';
     TypegooseModule.forFeature([Vehicle]),
     TypegooseModule.forFeature([User]),
     TypegooseModule.forFeature([Session]),
+    TypegooseModule.forFeature([Account]),
   ],
   controllers: [
     AppController,
@@ -34,6 +38,7 @@ import { PassportModule } from '@nestjs/passport';
     CustomerController,
     UsersController,
     AuthController,
+    AccountController,
   ],
   providers: [
     AppService,
@@ -42,6 +47,7 @@ import { PassportModule } from '@nestjs/passport';
     AuthService,
     UsersService,
     HttpStrategy,
+    AccountService,
   ],
 })
 export class AppModule { }
