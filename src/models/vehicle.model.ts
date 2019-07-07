@@ -1,6 +1,6 @@
 import { Typegoose, prop, Ref } from 'typegoose';
 import { IsString, IsEnum, IsMongoId } from 'class-validator';
-import Customer from './customer.model';
+import Account from './account.model';
 
 export enum VehicleEngineType {
     DIESEL = 'diesel',
@@ -23,6 +23,6 @@ export default class Vehicle extends Typegoose {
     engineType: VehicleEngineType;
 
     @IsMongoId()
-    @prop({ ref: Customer, required: true })
-    customer: Ref<Customer>;
+    @prop({ ref: Account, required: true })
+    account: Ref<Account>;
 }

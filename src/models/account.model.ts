@@ -11,6 +11,7 @@ export default class Account extends Typegoose {
 
     @IsMongoId()
     @IsOptional()
+    // tslint:disable-next-line: variable-name
     _id: string;
 
     @IsString()

@@ -1,6 +1,6 @@
 import { Typegoose, prop, Ref } from 'typegoose';
 import { IsMongoId, IsOptional, IsDate, IsBoolean } from 'class-validator';
-import User from './user.model';
+import Account from './account.model';
 
 export default class Session extends Typegoose {
 
@@ -27,8 +27,8 @@ export default class Session extends Typegoose {
 
     @IsMongoId()
     @IsOptional()
-    @prop({ ref: User })
-    user: Ref<User>;
+    @prop({ ref: Account })
+    account: Ref<Account>;
 
     @IsBoolean()
     @IsOptional()

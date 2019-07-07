@@ -12,4 +12,8 @@ export class AccountService {
         const createdCat = new this.accountModel(account);
         return await createdCat.save();
     }
+
+    async findByEmail(email: string): Promise<Account> {
+        return await this.accountModel.findOne({ email });
+    }
 }

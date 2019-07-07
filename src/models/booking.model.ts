@@ -1,7 +1,7 @@
 import { Typegoose, prop, Ref } from 'typegoose';
 import { IsEnum, IsString } from 'class-validator';
-import Customer from './customer.model';
 import Vehicle from './vehicle.model';
+import Account from './account.model';
 
 export enum BookingServiceType {
     ANUAL_SERVICE = 'Anual Service',
@@ -35,8 +35,8 @@ export default class Booking extends Typegoose {
     @prop()
     customerComments: string;
 
-    @prop({ ref: Customer, required: true })
-    customer: Ref<Customer>;
+    @prop({ ref: Account, required: true })
+    customer: Ref<Account>;
 
     @prop({ ref: Vehicle, required: true })
     vehicle: Ref<Vehicle>;
