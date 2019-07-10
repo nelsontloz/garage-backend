@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
-import Booking from '../models/booking.model';
+import Booking, { BookingStatus } from '../models/booking.model';
 import { ModelType } from 'typegoose';
+import * as moment from 'moment';
+import * as calendar from 'calendar-js';
 
 @Injectable()
 export class BookingService {
@@ -12,11 +14,66 @@ export class BookingService {
     return await createBooking.save();
   }
 
-  async findCustomerById(id: string): Promise<Booking> {
+  async findBookingById(id: string): Promise<Booking> {
     return await this.bookingModel.findOne({
       _id: id,
     })
-    .populate('customer')
-    .exec();
+      .populate('customer')
+      .exec();
+  }
+
+  async findSlotsByDay(date: moment.Moment): Promise<Booking[]> {
+    return await this.bookingModel.find({
+      date: {
+        $gt: date.toISOString(),
+        $lt: date.clone().add(1, 'day').toISOString(),
+      },
+    }).exec();
+  }
+
+  async createSlots() {
+    const months = [];
+    const validDays: moment.Moment[] = [];
+    const slots = [];
+    const initialDate = moment();
+
+    for (let i = 0; i < 10; i++) {
+      const month = calendar().detailed(initialDate.year(), initialDate.month());
+      months.push(month);
+      initialDate.add(1, 'month');
+    }
+
+    // console.log(months);
+
+    months.forEach((month) => {
+      month.calendar.forEach((week) => {
+        week.forEach((day, index: number) => {
+          // console.log(day);
+          if (index === 0 || index === 6) {
+            return;
+          }
+          if (!day.isInPrimaryMonth) {
+            return;
+          }
+          const momDay = moment(day.date);
+          validDays.push(momDay);
+        });
+      });
+    });
+
+    validDays.forEach(day => {
+      let firstSlot = day.clone().add(9, 'hours');
+      for (let i = 0; i < 8; i++) {
+        slots.push(firstSlot);
+        firstSlot = firstSlot.clone().add(1, 'hour');
+      }
+    });
+
+    slots.forEach((slot: moment.Moment) => {
+      this.bookingModel.create({
+        status: BookingStatus.FREE,
+        date: slot.toISOString(),
+      });
+    });
   }
 }

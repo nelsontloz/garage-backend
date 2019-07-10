@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req, Query } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import Booking from '../models/booking.model';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import moment = require('moment');
 
 @Controller('booking')
 export class BookingController {
@@ -13,9 +14,15 @@ export class BookingController {
     return this.bookingService.create(createBooking);
   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard())
-  async findAll(@Param('id') id: string, @Req() request: Request) {
-    return this.bookingService.findCustomerById(id);
+  @Get()
+  // @UseGuards(AuthGuard())
+  async findSlotsByDay(@Query('date') date: string) {
+    const dateMoment = moment(date, 'dd-mm-yyyy');
+    return await this.bookingService.findSlotsByDay(dateMoment);
+  }
+
+  @Post('slots')
+  async createSlots() {
+    return this.bookingService.createSlots();
   }
 }

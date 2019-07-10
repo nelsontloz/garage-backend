@@ -4,13 +4,14 @@ import Vehicle from './vehicle.model';
 import Account from './account.model';
 
 export enum BookingServiceType {
-    ANUAL_SERVICE = 'Anual Service',
+    ANNUAL_SERVICE = 'Annual Service',
     MAJOR_SERVICE = 'Major Service',
     REPAIR = 'Repair',
     MAJOR_REPAIR = 'Major Repair',
 }
 
 export enum BookingStatus {
+    FREE = 'free',
     BOOKED = 'booked',
     IN_SERVICE = 'in service',
     FIXED = 'fixed',
@@ -24,20 +25,20 @@ export default class Booking extends Typegoose {
     serviceType: BookingServiceType;
 
     @IsEnum(BookingStatus)
-    @prop({ enum: Object.values(BookingStatus) })
+    @prop({ enum: Object.values(BookingStatus), required: true })
     status: BookingStatus;
 
     @IsString()
-    @prop()
+    @prop({ required: true })
     date: string;
 
     @IsString()
     @prop()
     customerComments: string;
 
-    @prop({ ref: Account, required: true })
+    @prop({ ref: Account })
     customer: Ref<Account>;
 
-    @prop({ ref: Vehicle, required: true })
+    @prop({ ref: Vehicle })
     vehicle: Ref<Vehicle>;
 }
