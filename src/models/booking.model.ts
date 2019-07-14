@@ -1,5 +1,5 @@
 import { Typegoose, prop, Ref } from 'typegoose';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsString, IsDate, IsOptional } from 'class-validator';
 import Vehicle from './vehicle.model';
 import Account from './account.model';
 
@@ -21,24 +21,28 @@ export enum BookingStatus {
 
 export default class Booking extends Typegoose {
     @IsEnum(BookingServiceType)
-    @prop({ enum: BookingServiceType })
+    @IsOptional()
+    @prop({ enum: Object.values(BookingServiceType) })
     serviceType: BookingServiceType;
 
     @IsEnum(BookingStatus)
     @prop({ enum: Object.values(BookingStatus), required: true })
     status: BookingStatus;
 
-    @IsString()
+    @IsDate()
     @prop({ required: true })
-    date: string;
+    date: Date;
 
     @IsString()
+    @IsOptional()
     @prop()
     customerComments: string;
 
+    @IsOptional()
     @prop({ ref: Account })
     customer: Ref<Account>;
 
+    @IsOptional()
     @prop({ ref: Vehicle })
     vehicle: Ref<Vehicle>;
 }

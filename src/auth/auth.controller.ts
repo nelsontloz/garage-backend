@@ -1,10 +1,23 @@
-import { Controller, Post, Body, Put } from '@nestjs/common';
+import { Controller, Post, Body, Put, Headers, Get, NotFoundException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Session } from 'inspector';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
+
+    @Get()
+    async validateAccessToken(@Headers() headers) {
+        let accessToken = headers.authorization;
+        if (!accessToken) {
+            throw new NotFoundException();
+        }
+        accessToken = accessToken.split(' ')[1];
+        const session = await this.authService.getSession(accessToken);
+        if (!session) {
+            throw new NotFoundException();
+        }
+        return session;
+    }
 
     @Post()
     async authenticate(@Body() auth: any) {
@@ -12,9 +25,14 @@ export class AuthController {
     }
 
     @Put('revoke')
-    async revoke(@Body() revoke: any) {
-        return this.authService.revokeSession(revoke.sessionId).then((session: any) => {
-            return { message: 'session revoqued!' };
+    async revoke(@Headers() headers) {
+        let accessToken = headers.authorization;
+        if (!accessToken) {
+            throw new NotFoundException();
+        }
+        accessToken = accessToken.split(' ')[1];
+        return this.authService.revokeSession(accessToken).then((session: any) => {
+            return { message: 'session revoked!' };
         });
     }
 }

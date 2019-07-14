@@ -22,6 +22,14 @@ export class BookingService {
       .exec();
   }
 
+  async findBookingByDate(date: moment.Moment): Promise<Booking> {
+    return await this.bookingModel.findOne({
+      date: date.toDate(),
+    })
+      .populate('customer')
+      .exec();
+  }
+
   async findSlotsByDay(date: moment.Moment): Promise<Booking[]> {
     return await this.bookingModel.find({
       date: {
@@ -29,6 +37,26 @@ export class BookingService {
         $lt: date.clone().add(1, 'day').toISOString(),
       },
     }).exec();
+  }
+
+  async getSlotsAvailable(startDate: moment.Moment, endDate: moment.Moment): Promise<any> {
+    return await this.bookingModel.aggregate([
+      {
+        $match: {
+          date: {
+            $gt: startDate.toDate(),
+            $lt: endDate.toDate(),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $dayOfYear: '$date' },
+          date: { $first: '$date' },
+          slots: { $sum: 1 },
+        },
+      },
+    ]);
   }
 
   async createSlots() {
@@ -72,7 +100,7 @@ export class BookingService {
     slots.forEach((slot: moment.Moment) => {
       this.bookingModel.create({
         status: BookingStatus.FREE,
-        date: slot.toISOString(),
+        date: slot.toDate(),
       });
     });
   }

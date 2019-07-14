@@ -10,17 +10,14 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
     constructor(@InjectModel(Session) private readonly sessionModel: ModelType<Session>,
-                private readonly accountService: AccountService) { }
+        private readonly accountService: AccountService) { }
 
     async authenticate(email: string, password: string): Promise<any> {
-        let accountId: string;
         const account = await this.accountService.findByEmail(email);
 
         if (!account || !await bcrypt.compare(password, account.password)) {
             throw new UnauthorizedException('Invalid credentials!');
         }
-
-        accountId = account._id;
         const session = await this.sessionModel.findOne({
             account: account._id,
             expiration: {
@@ -30,8 +27,6 @@ export class AuthService {
         });
 
         if (session) {
-            const currentDate = moment();
-            const sessionDate = moment(session.expiration);
             throw new ConflictException({
                 message: 'A session already active!',
                 sessionId: session._id
@@ -39,20 +34,26 @@ export class AuthService {
         }
         const createdSession = {
             accessToken: this.generateMongoId(),
-            account: accountId,
+            account,
             timeStamp: moment().toISOString(),
             expiration: moment().add('60', 'minutes'),
         };
         const createSession = new this.sessionModel(createdSession);
-        return await createSession.save();
+        const sec = await createSession.save()
+        return await this.getSession(sec.accessToken);
     }
 
-    async revokeSession(sessionId: string) {
-        return await this.sessionModel.findOneAndUpdate({ _id: sessionId }, { revoked: true });
+    async revokeSession(accessToken: string) {
+        return await this.sessionModel.findOneAndUpdate({ accessToken }, { revoked: true });
     }
 
     async getSession(accessToken: string) {
-        return await this.sessionModel.findOne({ accessToken }).populate('account');
+        return await this.sessionModel.findOne({
+            accessToken,
+            expiration: {
+                $gt: new Date(),
+            },
+        }).populate('account', '-password');
     }
 
     private generateMongoId() {
