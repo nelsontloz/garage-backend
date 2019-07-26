@@ -7,7 +7,9 @@ import * as calendar from 'calendar-js';
 
 @Injectable()
 export class BookingService {
-  constructor(@InjectModel(Booking) private readonly bookingModel: ModelType<Booking>) { }
+  constructor(
+    @InjectModel(Booking) private readonly bookingModel: ModelType<Booking>,
+  ) {}
 
   async create(createBookingDto: Booking): Promise<Booking> {
     const createBooking = new this.bookingModel(createBookingDto);
@@ -15,31 +17,60 @@ export class BookingService {
   }
 
   async findBookingById(id: string): Promise<Booking> {
-    return await this.bookingModel.findOne({
-      _id: id,
-    })
+    return await this.bookingModel
+      .findOne({
+        _id: id,
+      })
       .populate('customer')
       .exec();
   }
 
   async findBookingByDate(date: moment.Moment): Promise<Booking> {
-    return await this.bookingModel.findOne({
-      date: date.toDate(),
-    })
+    return await this.bookingModel
+      .findOne({
+        date: date.toDate(),
+      })
       .populate('customer')
       .exec();
   }
 
-  async findSlotsByDay(date: moment.Moment): Promise<Booking[]> {
-    return await this.bookingModel.find({
-      date: {
-        $gt: date.toISOString(),
-        $lt: date.clone().add(1, 'day').toISOString(),
-      },
-    }).exec();
+  async findBookingByCustomer(id: string): Promise<Booking[]> {
+    return await this.bookingModel
+      .find({
+        customer: id,
+      })
+      .exec();
   }
 
-  async getSlotsAvailable(startDate: moment.Moment, endDate: moment.Moment): Promise<any> {
+  async bookSlotByDate(slotId: string, bookingDetails: any): Promise<Booking> {
+    return await this.bookingModel
+      .findOneAndUpdate(
+        {
+          _id: slotId,
+        },
+        bookingDetails,
+      )
+      .exec();
+  }
+
+  async findSlotsByDay(date: moment.Moment): Promise<Booking[]> {
+    return await this.bookingModel
+      .find({
+        date: {
+          $gt: date.toISOString(),
+          $lt: date
+            .clone()
+            .add(1, 'day')
+            .toISOString(),
+        },
+      })
+      .exec();
+  }
+
+  async getSlotsAvailable(
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+  ): Promise<any> {
     return await this.bookingModel.aggregate([
       {
         $match: {
@@ -47,6 +78,7 @@ export class BookingService {
             $gt: startDate.toDate(),
             $lt: endDate.toDate(),
           },
+          status: BookingStatus.FREE,
         },
       },
       {
@@ -66,15 +98,18 @@ export class BookingService {
     const initialDate = moment();
 
     for (let i = 0; i < 10; i++) {
-      const month = calendar().detailed(initialDate.year(), initialDate.month());
+      const month = calendar().detailed(
+        initialDate.year(),
+        initialDate.month(),
+      );
       months.push(month);
       initialDate.add(1, 'month');
     }
 
     // console.log(months);
 
-    months.forEach((month) => {
-      month.calendar.forEach((week) => {
+    months.forEach(month => {
+      month.calendar.forEach(week => {
         week.forEach((day, index: number) => {
           // console.log(day);
           if (index === 0 || index === 6) {
