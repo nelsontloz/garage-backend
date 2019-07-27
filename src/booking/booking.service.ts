@@ -21,7 +21,7 @@ export class BookingService {
       .findOne({
         _id: id,
       })
-      .populate('customer')
+      .populate('customer', '-password')
       .exec();
   }
 
@@ -30,7 +30,7 @@ export class BookingService {
       .findOne({
         date: date.toDate(),
       })
-      .populate('customer')
+      .populate('customer', '-password')
       .exec();
   }
 
@@ -89,6 +89,49 @@ export class BookingService {
         },
       },
     ]);
+  }
+
+  async getBookedSlots(
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+  ): Promise<any> {
+    return await this.bookingModel.aggregate([
+      {
+        $match: {
+          date: {
+            $gt: startDate.toDate(),
+            $lt: endDate.toDate(),
+          },
+          status: {
+            $ne: BookingStatus.FREE,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $dayOfYear: '$date' },
+          date: { $first: '$date' },
+          slots: { $sum: 1 },
+        },
+      },
+    ]);
+  }
+
+  async getBookedSlotsDetails(
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+  ): Promise<any> {
+    return await this.bookingModel
+      .find({
+        date: {
+          $gt: startDate.toDate(),
+          $lt: endDate.toDate(),
+        },
+        status: {
+          $ne: BookingStatus.FREE,
+        },
+      })
+      .populate('customer', '-password')
   }
 
   async createSlots() {

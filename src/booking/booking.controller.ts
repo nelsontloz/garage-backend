@@ -75,6 +75,26 @@ export class BookingController {
     return await this.bookingService.getSlotsAvailable(startMoment, endMoment);
   }
 
+  @Get('booked-slots')
+  async getBookedSlots(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    const startMoment = moment(startDate, 'DD-MM-YYYY');
+    const endMoment = moment(endDate, 'DD-MM-YYYY');
+    return await this.bookingService.getBookedSlots(startMoment, endMoment);
+  }
+
+  @Get('booked-slots-details')
+  async getBookedSlotsDetails(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    const startMoment = moment(startDate, 'DD-MM-YYYY');
+    const endMoment = moment(endDate, 'DD-MM-YYYY');
+    return await this.bookingService.getBookedSlotsDetails(startMoment, endMoment);
+  }
+
   @Post('slots')
   async createSlots() {
     return this.bookingService.createSlots();
