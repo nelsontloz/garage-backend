@@ -131,7 +131,7 @@ export class BookingService {
           $ne: BookingStatus.FREE,
         },
       })
-      .populate('customer', '-password')
+      .populate('customer', '-password');
   }
 
   async createSlots() {
@@ -141,7 +141,7 @@ export class BookingService {
     const initialDate = moment();
 
     for (let i = 0; i < 10; i++) {
-      const month = calendar().detailed(
+      const month = (calendar as any)().detailed(
         initialDate.year(),
         initialDate.month(),
       );

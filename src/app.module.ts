@@ -10,8 +10,6 @@ import { HttpStrategy } from './auth/http.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AccountController } from './account/account.controller';
 import { AccountService } from './account/account.service';
-import { VehicleController } from './vehicle/vehicle.controller';
-import { VehicleService } from './vehicle/vehicle.service';
 import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import Session from './models/session.model';
@@ -31,7 +29,6 @@ import Account from './models/account.model';
     BookingController,
     AuthController,
     AccountController,
-    VehicleController,
   ],
   providers: [
     AppService,
@@ -39,7 +36,6 @@ import Account from './models/account.model';
     AuthService,
     HttpStrategy,
     AccountService,
-    VehicleService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
