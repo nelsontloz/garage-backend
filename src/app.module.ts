@@ -18,7 +18,7 @@ import Account from './models/account.model';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'bearer' }),
-    TypegooseModule.forRoot('mongodb://nest:nest123456@mongo/admin'),
+    TypegooseModule.forRoot('mongodb://nest:nest123456@localhost:1055/admin'),
     TypegooseModule.forFeature([Booking]),
     TypegooseModule.forFeature([Vehicle]),
     TypegooseModule.forFeature([Session]),
