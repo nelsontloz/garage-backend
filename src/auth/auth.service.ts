@@ -8,7 +8,7 @@ import Session from '../models/session.model';
 import { ModelType } from 'typegoose';
 import * as moment from 'moment';
 import { AccountService } from '../account/account.service';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 
 // TODO: add auth
 @Injectable()
@@ -21,7 +21,7 @@ export class AuthService {
   async authenticate(email: string, password: string): Promise<any> {
     const account = await this.accountService.findByEmail(email);
 
-    if (!account || !(await bcrypt.compare(password, account.password))) {
+    if (!account || !(await bcryptjs.compare(password, account.password))) {
       throw new UnauthorizedException('Invalid credentials!');
     }
     const session = await this.sessionModel.findOne({
