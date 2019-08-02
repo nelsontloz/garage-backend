@@ -10,15 +10,29 @@ import { HttpStrategy } from './auth/http.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AccountController } from './account/account.controller';
 import { AccountService } from './account/account.service';
+import { ConfigModule } from './config/config.module';
 import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import Session from './models/session.model';
 import Account from './models/account.model';
+import { ConfigService } from './config/config.service';
 
 @Module({
   imports: [
+    ConfigModule,
     PassportModule.register({ defaultStrategy: 'bearer' }),
-    TypegooseModule.forRoot('mongodb://localhost/nest'),
+    TypegooseModule.forRootAsync({
+      useFactory: () => {
+        const config = new ConfigService(
+          `environment/${
+            process.env.NODE_ENV ? process.env.NODE_ENV : 'dev'
+          }.env`,
+        );
+        return {
+          uri: config.get('DATABASE_URI'),
+        };
+      },
+    }),
     TypegooseModule.forFeature([Booking]),
     TypegooseModule.forFeature([Vehicle]),
     TypegooseModule.forFeature([Session]),
