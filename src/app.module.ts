@@ -10,12 +10,11 @@ import { HttpStrategy } from './auth/http.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AccountController } from './account/account.controller';
 import { AccountService } from './account/account.service';
-import { ConfigModule } from './config/config.module';
+import { ConfigModule, configFactory } from './config/config.module';
 import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import Session from './models/session.model';
 import Account from './models/account.model';
-import { ConfigService } from './config/config.service';
 
 @Module({
   imports: [
@@ -23,11 +22,7 @@ import { ConfigService } from './config/config.service';
     PassportModule.register({ defaultStrategy: 'bearer' }),
     TypegooseModule.forRootAsync({
       useFactory: () => {
-        const config = new ConfigService(
-          `environment/${
-            process.env.NODE_ENV ? process.env.NODE_ENV : 'dev'
-          }.env`,
-        );
+        const config = configFactory();
         return {
           uri: config.get('DATABASE_URI'),
         };

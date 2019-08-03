@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import AccountCreation from '../models/account-creation.model ';
 import Account, { AccountType } from '../models/account.model';
@@ -19,5 +19,14 @@ export class AccountController {
         message: 'account created!',
       };
     });
+  }
+
+  @Get()
+  async getAccounts() {
+    return await this.accountService
+      .findCustomerAccounts()
+      .then((customers: Account[]) => {
+        return customers;
+      });
   }
 }

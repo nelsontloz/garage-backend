@@ -92,7 +92,10 @@ export class BookingController {
   ) {
     const startMoment = moment(startDate, 'DD-MM-YYYY');
     const endMoment = moment(endDate, 'DD-MM-YYYY');
-    return await this.bookingService.getBookedSlotsDetails(startMoment, endMoment);
+    return await this.bookingService.getBookedSlotsDetails(
+      startMoment,
+      endMoment,
+    );
   }
 
   @Post('slots')
