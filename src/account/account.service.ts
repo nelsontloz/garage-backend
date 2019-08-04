@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import Account, { AccountType } from '../models/account.model';
 import { ModelType } from 'typegoose';
+import { ObjectId } from 'bson';
 
 @Injectable()
 export class AccountService {
@@ -23,5 +24,11 @@ export class AccountService {
       { type: AccountType.CUSTOMER },
       { password: 0 },
     );
+  }
+
+  async deleteCustomer(accountId: string) {
+    return await this.accountModel.deleteOne({
+      _id: new ObjectId(accountId),
+    });
   }
 }

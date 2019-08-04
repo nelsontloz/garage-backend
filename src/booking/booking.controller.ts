@@ -7,6 +7,7 @@ import {
   Query,
   Put,
   Headers,
+  BadRequestException,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import Booking, { BookingStatus } from '../models/booking.model';
@@ -26,6 +27,27 @@ export class BookingController {
   @Post()
   async create(@Body() createBooking: Booking) {
     return this.bookingService.create(createBooking);
+  }
+
+  @Get('/one-slot')
+  // @UseGuards(AuthGuard())
+  async findSlotById(@Query('slotId') slotId: string) {
+    return await this.bookingService.findBookingById(slotId);
+  }
+
+  @Put('/one-slot-status')
+  // @UseGuards(AuthGuard())
+  async updateSlotStatus(
+    @Query('slotId') slotId: string,
+    @Query('status') status: string,
+  ) {
+    if (Object.values(BookingStatus).indexOf(status) < 0) {
+      throw new BadRequestException('invalid status');
+    }
+    return await this.bookingService.updateBookStatus(
+      slotId,
+      status as BookingStatus,
+    );
   }
 
   @Get()

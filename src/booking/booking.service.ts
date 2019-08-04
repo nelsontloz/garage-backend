@@ -53,6 +53,20 @@ export class BookingService {
       .exec();
   }
 
+  async updateBookStatus(slotId: string, status: BookingStatus) {
+    console.log(status);
+    return await this.bookingModel
+      .findOneAndUpdate(
+        {
+          _id: slotId,
+        },
+        {
+          status,
+        },
+      )
+      .exec();
+  }
+
   async findSlotsByDay(date: moment.Moment): Promise<Booking[]> {
     return await this.bookingModel
       .find({
@@ -148,8 +162,6 @@ export class BookingService {
       months.push(month);
       initialDate.add(1, 'month');
     }
-
-    // console.log(months);
 
     months.forEach(month => {
       month.calendar.forEach(week => {

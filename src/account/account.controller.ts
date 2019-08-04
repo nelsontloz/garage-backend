@@ -1,9 +1,18 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Delete,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import AccountCreation from '../models/account-creation.model ';
 import Account, { AccountType } from '../models/account.model';
 import { AccountService } from './account.service';
 import * as bcryptjs from 'bcryptjs';
+import { isString } from 'util';
 
 @Controller('account')
 export class AccountController {
@@ -28,5 +37,13 @@ export class AccountController {
       .then((customers: Account[]) => {
         return customers;
       });
+  }
+
+  @Delete()
+  async deleteAccount(@Query('customerId') customerId: string) {
+    if (isString(customerId)) {
+      return this.accountService.deleteCustomer(customerId);
+    }
+    throw new BadRequestException('Invalid value!');
   }
 }
