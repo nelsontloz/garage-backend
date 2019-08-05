@@ -54,7 +54,6 @@ export class BookingService {
   }
 
   async updateBookStatus(slotId: string, status: BookingStatus) {
-    console.log(status);
     return await this.bookingModel
       .findOneAndUpdate(
         {

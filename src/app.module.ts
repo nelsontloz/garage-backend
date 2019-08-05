@@ -11,10 +11,13 @@ import { PassportModule } from '@nestjs/passport';
 import { AccountController } from './account/account.controller';
 import { AccountService } from './account/account.service';
 import { ConfigModule, configFactory } from './config/config.module';
+import { PartsController } from './parts/parts.controller';
+import { PartsService } from './parts/parts.service';
 import Booking from './models/booking.model';
 import Vehicle from './models/vehicle.model';
 import Session from './models/session.model';
 import Account from './models/account.model';
+import Parts from './models/parts.model';
 
 @Module({
   imports: [
@@ -32,12 +35,14 @@ import Account from './models/account.model';
     TypegooseModule.forFeature([Vehicle]),
     TypegooseModule.forFeature([Session]),
     TypegooseModule.forFeature([Account]),
+    TypegooseModule.forFeature([Parts]),
   ],
   controllers: [
     AppController,
     BookingController,
     AuthController,
     AccountController,
+    PartsController,
   ],
   providers: [
     AppService,
@@ -45,6 +50,7 @@ import Account from './models/account.model';
     AuthService,
     HttpStrategy,
     AccountService,
+    PartsService,
   ],
 })
 export class AppModule {}
