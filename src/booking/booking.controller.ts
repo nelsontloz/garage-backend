@@ -8,6 +8,7 @@ import {
   Put,
   Headers,
   BadRequestException,
+  Delete,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import Booking, { BookingStatus } from '../models/booking.model';
@@ -16,6 +17,7 @@ import moment = require('moment');
 import { AuthService } from '../auth/auth.service';
 import { ObjectID } from 'bson';
 import Account from '../models/account.model';
+import Parts from '../models/parts.model';
 
 @Controller('booking')
 export class BookingController {
@@ -48,6 +50,21 @@ export class BookingController {
       slotId,
       status as BookingStatus,
     );
+  }
+
+  @Put('/one-slot-part')
+  // @UseGuards(AuthGuard())
+  async addOnePart(@Body() part: Parts, @Query('slotId') slotId: string) {
+    return await this.bookingService.addExtraPart(slotId, part);
+  }
+
+  @Delete('/one-slot-part')
+  // @UseGuards(AuthGuard())
+  async removeOnePart(
+    @Query('slotId') slotId: string,
+    @Query('partId') partId: string,
+  ) {
+    return await this.bookingService.removeExtraPart(slotId, partId);
   }
 
   @Get()

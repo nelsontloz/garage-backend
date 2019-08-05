@@ -2,6 +2,7 @@ import { Typegoose, prop, Ref } from 'typegoose';
 import { IsEnum, IsString, IsDate, IsOptional } from 'class-validator';
 import Vehicle from './vehicle.model';
 import Account from './account.model';
+import Parts from './parts.model';
 
 export enum BookingServiceType {
   ANNUAL_SERVICE = 'Annual Service',
@@ -46,4 +47,8 @@ export default class Booking extends Typegoose {
   @IsOptional()
   @prop({ default: null })
   vehicle: Vehicle;
+
+  @IsOptional()
+  @prop({ default: [] })
+  extraParts: Parts[];
 }

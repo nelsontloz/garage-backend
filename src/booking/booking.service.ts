@@ -4,6 +4,8 @@ import Booking, { BookingStatus } from '../models/booking.model';
 import { ModelType } from 'typegoose';
 import * as moment from 'moment';
 import * as calendar from 'calendar-js';
+import Parts from '../models/parts.model';
+import { ObjectId } from 'bson';
 
 @Injectable()
 export class BookingService {
@@ -40,6 +42,29 @@ export class BookingService {
         customer: id,
       })
       .exec();
+  }
+
+  async addExtraPart(id: string, part: Parts): Promise<Booking> {
+    return await this.bookingModel.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $push: { extraParts: part } },
+    );
+  }
+
+  async removeExtraPart(slotId: string, partId: string): Promise<Booking> {
+    const slot = await this.bookingModel.findOne({ _id: new ObjectId(slotId) });
+    let valueIndex;
+    slot.extraParts.some((part: Parts, index: number) => {
+      if (part._id === partId) {
+        valueIndex = index;
+        return true;
+      }
+    });
+    slot.extraParts.splice(valueIndex, 1);
+    return await this.bookingModel.findOneAndUpdate(
+      { _id: new ObjectId(slotId) },
+      { extraParts: slot.extraParts },
+    );
   }
 
   async bookSlotByDate(slotId: string, bookingDetails: any): Promise<Booking> {
