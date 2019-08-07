@@ -9,6 +9,7 @@ import { ModelType } from 'typegoose';
 import * as moment from 'moment';
 import { AccountService } from '../account/account.service';
 import * as bcryptjs from 'bcryptjs';
+import { ObjectId } from 'bson';
 
 // TODO: add auth
 @Injectable()
@@ -49,9 +50,16 @@ export class AuthService {
     return await this.getSession(sec.accessToken);
   }
 
-  async revokeSession(accessToken: string) {
+  async logout(accessToken: string) {
     return await this.sessionModel.findOneAndUpdate(
       { accessToken },
+      { revoked: true },
+    );
+  }
+
+  async revokeSession(sessionId: string) {
+    return await this.sessionModel.findOneAndUpdate(
+      { _id: new ObjectId(sessionId) },
       { revoked: true },
     );
   }

@@ -6,8 +6,10 @@ import {
   Headers,
   Get,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { isString } from 'util';
 
 @Controller('auth')
 export class AuthController {
@@ -32,14 +34,25 @@ export class AuthController {
     return this.authService.authenticate(auth.email, auth.password);
   }
 
-  @Put('revoke')
-  async revoke(@Headers() headers) {
+  @Put('logout')
+  async logout(@Headers() headers) {
     let accessToken = headers.authorization;
     if (!accessToken) {
       throw new NotFoundException();
     }
     accessToken = accessToken.split(' ')[1];
-    return this.authService.revokeSession(accessToken).then((session: any) => {
+    return this.authService.logout(accessToken).then((session: any) => {
+      return { message: 'logged out!' };
+    });
+  }
+
+  @Put('revoke')
+  async revoke(@Body() body) {
+    const sessionId = body.sessionId;
+    if (!isString(sessionId)) {
+      throw new BadRequestException();
+    }
+    return this.authService.revokeSession(sessionId).then((session: any) => {
       return { message: 'session revoked!' };
     });
   }
